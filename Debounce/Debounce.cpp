@@ -6,7 +6,8 @@
 /* TODO: Use SetMenuItemInfoA instead of destroying and recreating every time */
 /* TODO: Nothing is cleaned up on error/exit */
 
-static constexpr UINT_PTR MENU_CLOSE_ID = 0xDEADBEEF;
+// Yes, this is stashed in a bool when returning from TrackPopupMenu despite being a UINT_PTR in InsertMenu{,Item}
+static constexpr BOOL MENU_CLOSE_ID = 0xDEADBEEF;
 static constexpr DWORD DEFAULT_DEBOUNCE_THRESHOLD_MS = 10;
 
 // TODO: Move this global state into a class
