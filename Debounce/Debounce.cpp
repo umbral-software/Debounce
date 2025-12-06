@@ -8,6 +8,8 @@
 static constexpr WORD MENU_CLOSE_ID = 0xDEAD;
 static constexpr DWORD DEFAULT_DEBOUNCE_THRESHOLD_MS = 10;
 
+// LowLevelMouseProc has no way to stash a user data pointer with it. So these have to be global.
+// MSLLHOOKSTRUCT::dwExtraInfo is for device-specific info, not user data afaict.
 static DWORD DEBOUNCE_THRESHOLD_MS = DEFAULT_DEBOUNCE_THRESHOLD_MS;
 static DWORD LAST_LBUTTON_UP, LAST_RBUTTON_UP;
 
