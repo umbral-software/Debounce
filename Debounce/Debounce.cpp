@@ -88,6 +88,9 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lP
                 LOWORD(wParam), HIWORD(wParam),
                 0, hWnd, nullptr);
 
+            DestroyMenu(hMenu);
+            DestroyMenu(hSubmenu);
+
             if (MENU_CLOSE_ID == result) {
                 PostQuitMessage(0);
             }
