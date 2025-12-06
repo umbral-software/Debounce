@@ -8,7 +8,6 @@
 static constexpr WORD MENU_CLOSE_ID = 0xDEAD;
 static constexpr DWORD DEFAULT_DEBOUNCE_THRESHOLD_MS = 10;
 
-// TODO: Move this global state into a class
 static DWORD DEBOUNCE_THRESHOLD_MS = DEFAULT_DEBOUNCE_THRESHOLD_MS;
 static DWORD LAST_LBUTTON_UP, LAST_RBUTTON_UP;
 
