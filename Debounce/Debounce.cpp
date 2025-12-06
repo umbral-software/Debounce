@@ -4,7 +4,8 @@
 #include <string>
 
 // Note: this is stashed in a BOOL (i.e. int32_t) when returning from TrackPopupMenu despite being a UINT_PTR in InsertMenu{,Item}
-static constexpr int32_t MENU_CLOSE_ID = 0xDEADBEEF;
+// If using the WM_COMMAND message, it's smuggled into a single WORD (i.e. uint16_t)
+static constexpr WORD MENU_CLOSE_ID = 0xDEAD;
 static constexpr DWORD DEFAULT_DEBOUNCE_THRESHOLD_MS = 10;
 
 // TODO: Move this global state into a class
@@ -76,13 +77,13 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lP
             InsertDelayMenuOption(hSubmenu, 100, is_rtl);
 
             const auto hMenu = CreatePopupMenu();
-            InsertMenuA(hMenu, 0, MF_BYPOSITION | MF_STRING, static_cast<UINT_PTR>(MENU_CLOSE_ID), "Close");
+            InsertMenuA(hMenu, 0, MF_BYPOSITION | MF_STRING, MENU_CLOSE_ID, "Close");
             InsertMenuA(hMenu, 0, MF_BYPOSITION | MF_SEPARATOR, 0, nullptr);
             InsertMenuA(hMenu, 0, MF_BYPOSITION | MF_POPUP | MF_STRING, reinterpret_cast<UINT_PTR>(hSubmenu), "Delay");
 
             SetForegroundWindow(hWnd);
             const auto result = TrackPopupMenu(hMenu,
-                TPM_RETURNCMD | (is_rtl ? TPM_RIGHTALIGN | TPM_HORNEGANIMATION : TPM_LEFTALIGN | TPM_HORPOSANIMATION),
+                TPM_NONOTIFY | TPM_RETURNCMD| (is_rtl ? TPM_RIGHTALIGN | TPM_HORNEGANIMATION : TPM_LEFTALIGN | TPM_HORPOSANIMATION),
                 LOWORD(wParam), HIWORD(wParam),
                 0, hWnd, nullptr);
 
