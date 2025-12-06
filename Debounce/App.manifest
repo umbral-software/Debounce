@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:comp="urn:schemas-microsoft-com:compatibility.v1">
+  <asmv3:application>
+    <asmv3:windowsSettings xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">
+      <dpiAwareness>PerMonitorV2</dpiAwareness>
+      <longPathAware>true</longPathAware>
+      <activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage>
+    </asmv3:windowsSettings>
+  </asmv3:application>
+  <comp:compatibility>
+    <comp:application>
+      <comp:supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}"></comp:supportedOS>
+      <comp:maxversiontested Id="11.0.26200.7171"></comp:maxversiontested>
+    </comp:application>
+  </comp:compatibility>
+</assembly>
