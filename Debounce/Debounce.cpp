@@ -3,11 +3,8 @@
 #include <shellapi.h>
 #include <string>
 
-/* TODO: Use SetMenuItemInfoA instead of destroying and recreating every time */
-/* TODO: Nothing is cleaned up on error/exit */
-
-// Yes, this is stashed in a bool when returning from TrackPopupMenu despite being a UINT_PTR in InsertMenu{,Item}
-static constexpr BOOL MENU_CLOSE_ID = 0xDEADBEEF;
+// Note: this is stashed in a BOOL (i.e. int32_t) when returning from TrackPopupMenu despite being a UINT_PTR in InsertMenu{,Item}
+static constexpr int32_t MENU_CLOSE_ID = 0xDEADBEEF;
 static constexpr DWORD DEFAULT_DEBOUNCE_THRESHOLD_MS = 10;
 
 // TODO: Move this global state into a class
@@ -79,7 +76,7 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lP
             InsertDelayMenuOption(hSubmenu, 100, is_rtl);
 
             const auto hMenu = CreatePopupMenu();
-            InsertMenuA(hMenu, 0, MF_BYPOSITION | MF_STRING, MENU_CLOSE_ID, "Close");
+            InsertMenuA(hMenu, 0, MF_BYPOSITION | MF_STRING, static_cast<UINT_PTR>(MENU_CLOSE_ID), "Close");
             InsertMenuA(hMenu, 0, MF_BYPOSITION | MF_SEPARATOR, 0, nullptr);
             InsertMenuA(hMenu, 0, MF_BYPOSITION | MF_POPUP | MF_STRING, reinterpret_cast<UINT_PTR>(hSubmenu), "Delay");
 
