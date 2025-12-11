@@ -18,8 +18,16 @@
     <ClCompile Include="Debounce.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="NotificiationIcon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="App.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="NotificiationIcon.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
