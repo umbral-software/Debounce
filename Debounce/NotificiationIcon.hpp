@@ -27,7 +27,6 @@ private:
     static HINSTANCE _classHInstance;
     static bool _is_rtl;
     static ATOM _classAtom;
-    static HMODULE _resourceDLL;
     static HICON _mouseIcon;
     static HMENU _hMenu, _hSubMenu;
 
