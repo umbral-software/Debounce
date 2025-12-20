@@ -130,9 +130,17 @@ void NotificationIcon::InitClass()
     }
 
     _hMenu = CreatePopupMenu();
-    InsertMenuA(_hMenu, 0, MF_BYPOSITION | MF_STRING, MENU_CLOSE_ID, "Close");
-    InsertMenuA(_hMenu, 0, MF_BYPOSITION | MF_SEPARATOR, 0, nullptr);
-    InsertMenuA(_hMenu, 0, MF_BYPOSITION | MF_POPUP | MF_STRING, reinterpret_cast<UINT_PTR>(_hSubMenu), "Delay");
+    InsertMenuA(_hMenu, -1, MF_BYPOSITION | MF_POPUP, reinterpret_cast<UINT_PTR>(_hSubMenu), "Delay");
+    InsertMenuA(_hMenu, -1, MF_SEPARATOR | MF_BYPOSITION, 0, nullptr);
+    const MENUITEMINFOA mi = {
+        .cbSize = sizeof(MENUITEMINFOA),
+        .fMask = MIIM_FTYPE | MIIM_BITMAP | MIIM_STRING | MIIM_ID,
+        .fType = static_cast<UINT>(_is_rtl ? MFT_RIGHTORDER : 0),
+        .wID = MENU_CLOSE_ID,
+        .dwTypeData = const_cast<LPSTR>("Close"),
+        .hbmpItem = HBMMENU_MBAR_CLOSE
+    };
+    InsertMenuItemA(_hMenu, -1, true, &mi);
 }
 
 LRESULT CALLBACK NotificationIcon::WindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
