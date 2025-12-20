@@ -8,7 +8,7 @@
 // Note: this is stashed in a BOOL (i.e. int32_t) when returning from TrackPopupMenu despite being a UINT_PTR in InsertMenu{,Item}
 // If using the WM_COMMAND message, it's smuggled into a single WORD (i.e. uint16_t)
 static constexpr WORD MENU_CLOSE_ID = 0xDEAD;
-static constexpr LPSTR DDORES_MOOUSE_ICON_ID = MAKEINTRESOURCEA(2212);
+static const LPSTR DDORES_MOOUSE_ICON_ID = MAKEINTRESOURCEA(2212);
 
 static constexpr auto DELAY_VALUES_MS = std::array{
     1u,
