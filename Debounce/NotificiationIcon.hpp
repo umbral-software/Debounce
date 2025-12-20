@@ -3,10 +3,10 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
-#include <mutex>
-
 static constexpr DWORD DEFAULT_DEBOUNCE_THRESHOLD_MS = 10;
 extern DWORD DEBOUNCE_THRESHOLD_MS;
+
+class NotificationIconClass;
 
 class NotificationIcon {
 public:
@@ -21,16 +21,7 @@ public:
     HWND window() const noexcept;
 
 private:
-    static void InitClass();
-    static LRESULT CALLBACK WindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
-
-    static HINSTANCE _classHInstance;
-    static bool _is_rtl;
-    static ATOM _classAtom;
-    static HICON _mouseIcon;
-    static HMENU _hMenu, _hSubMenu;
-
-    static std::once_flag _classInitFlag;    
+    static NotificationIconClass _class;
 
 private:
     HWND _hWnd;

@@ -66,18 +66,24 @@ int wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
     NotificationIcon ni;
 
     if (!SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS)) MessageBoxA(nullptr, "Debounce failed to set process priority to high. You may experience additional input delay.", "Failed to set Priority", MB_ICONWARNING);
-    if (!SetWindowsHookExA(WH_MOUSE_LL, LowLevelMouseProc, hInstance, 0)) {
+    const auto hHook = SetWindowsHookExA(WH_MOUSE_LL, LowLevelMouseProc, hInstance, 0);
+    if (!hHook) {
         MessageBoxA(nullptr, "Debounce failed to register hook.", "Hook failed", MB_ICONERROR);
         return -3;
     }
 
     MSG msg;
-    while (GetMessageA(&msg, nullptr, 0, 0) > 0) {
-        if (WM_QUIT == msg.message) return static_cast<int>(msg.wParam);
-
+    while (GetMessageA(&msg, nullptr, 0, 0) > 0 && WM_QUIT != msg.message) {
         TranslateMessage(&msg);
         DispatchMessageA(&msg);
     }
 
-    return -4;
+    UnhookWindowsHookEx(hHook);
+    if (WM_QUIT == msg.message) {
+        return static_cast<int>(msg.wParam);
+    }
+    else
+    {
+        return -4;
+    }
 }
