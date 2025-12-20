@@ -10,7 +10,7 @@
   <comp:compatibility>
     <comp:application>
       <comp:supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}"></comp:supportedOS>
-      <comp:maxversiontested Id="11.0.26200.7171"></comp:maxversiontested>
+      <comp:maxversiontested Id="11.0.26200.7462"></comp:maxversiontested>
     </comp:application>
   </comp:compatibility>
 </assembly>
