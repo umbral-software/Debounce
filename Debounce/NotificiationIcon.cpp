@@ -108,7 +108,7 @@ void NotificationIcon::InitClass()
     };
     _classAtom = RegisterClassExA(&wndClass);
 
-    _resourceDLL = LoadLibraryExA("Ddores.dll", nullptr, LOAD_LIBRARY_AS_IMAGE_RESOURCE | LOAD_LIBRARY_SEARCH_SYSTEM32);
+    _resourceDLL = LoadLibraryExA("Ddores.dll", nullptr, LOAD_LIBRARY_AS_DATAFILE | LOAD_LIBRARY_AS_IMAGE_RESOURCE | LOAD_LIBRARY_SEARCH_SYSTEM32);
     _mouseIcon = static_cast<HICON>(LoadImageA(_resourceDLL, DDORES_MOOUSE_ICON_ID, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED)),
 
     _hSubMenu = CreatePopupMenu();
