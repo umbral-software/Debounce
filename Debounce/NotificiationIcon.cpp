@@ -8,6 +8,7 @@
 // Note: this is stashed in a BOOL (i.e. int32_t) when returning from TrackPopupMenu despite being a UINT_PTR in InsertMenu{,Item}
 // If using the WM_COMMAND message, it's smuggled into a single WORD (i.e. uint16_t)
 static constexpr WORD MENU_CLOSE_ID = 0xDEAD;
+static constexpr LPSTR DDORES_MOOUSE_ICON_ID = MAKEINTRESOURCEA(2212);
 
 static constexpr auto DELAY_VALUES_MS = std::array{
     1u,
@@ -40,7 +41,7 @@ NotificationIcon::NotificationIcon()
         .uID = 0,
         .uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP | NIF_SHOWTIP,
         .uCallbackMessage = WM_USER,
-        .hIcon = static_cast<HICON>(LoadImageA(_resourceDLL, MAKEINTRESOURCEA(2212), IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED)),
+        .hIcon = _mouseIcon,
         .szTip = "Debounce is running...",
         .uVersion = NOTIFYICON_VERSION_4,
     };
@@ -108,6 +109,7 @@ void NotificationIcon::InitClass()
     _classAtom = RegisterClassExA(&wndClass);
 
     _resourceDLL = LoadLibraryExA("Ddores.dll", nullptr, LOAD_LIBRARY_AS_IMAGE_RESOURCE | LOAD_LIBRARY_SEARCH_SYSTEM32);
+    _mouseIcon = static_cast<HICON>(LoadImageA(_resourceDLL, DDORES_MOOUSE_ICON_ID, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED)),
 
     _hSubMenu = CreatePopupMenu();
     for (const auto delayMs : DELAY_VALUES_MS) {
