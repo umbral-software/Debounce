@@ -4,9 +4,8 @@
 
 #include <array>
 #include <cassert>
-#include <string>
-
 #include <mutex>
+#include <string>
 
 // Note: this is stashed in a BOOL (i.e. int32_t) when returning from TrackPopupMenu despite being a UINT_PTR in InsertMenu{,Item}
 // If using the WM_COMMAND message, it's smuggled into a single WORD (i.e. uint16_t)
@@ -98,12 +97,12 @@ void NotificationIconClass::init()
             .wID = delayMs,
             .dwTypeData = const_cast<LPSTR>(text.c_str())
         };
-        InsertMenuItemA(hSubMenu, 0, true, &mi);
+        InsertMenuItemA(hSubMenu, static_cast<UINT>(-1), false, &mi);
     }
 
     hMenu = CreatePopupMenu();
-    InsertMenuA(hMenu, static_cast<UINT>(-1), MF_BYPOSITION | MF_POPUP, reinterpret_cast<UINT_PTR>(hSubMenu), "Delay");
-    InsertMenuA(hMenu, static_cast<UINT>(-1), MF_SEPARATOR | MF_BYPOSITION, 0, nullptr);
+    InsertMenuA(hMenu, static_cast<UINT>(-1), MF_POPUP, reinterpret_cast<UINT_PTR>(hSubMenu), "Delay");
+    InsertMenuA(hMenu, static_cast<UINT>(-1), MF_SEPARATOR, 0, nullptr);
     const MENUITEMINFOA mi = {
         .cbSize = sizeof(MENUITEMINFOA),
         .fMask = MIIM_FTYPE | MIIM_BITMAP | MIIM_STRING | MIIM_ID,
@@ -112,7 +111,7 @@ void NotificationIconClass::init()
         .dwTypeData = const_cast<LPSTR>("Close"),
         .hbmpItem = HBMMENU_MBAR_CLOSE
     };
-    InsertMenuItemA(hMenu, static_cast<UINT>(-1), true, &mi);
+    InsertMenuItemA(hMenu, static_cast<UINT>(-1), false, &mi);
 }
 
 LRESULT CALLBACK NotificationIconClass::WindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
