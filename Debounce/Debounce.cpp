@@ -17,7 +17,9 @@ static LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lPara
             LAST_LBUTTON_DOWN = hookStruct.time;
             break;
         case WM_LBUTTONUP:
-            if (hookStruct.time < LAST_LBUTTON_UP + DEBOUNCE_THRESHOLD_MS) {
+            if (hookStruct.time < LAST_LBUTTON_UP + DEBOUNCE_THRESHOLD_MS
+             || hookStruct.time < LAST_LBUTTON_DOWN + DEBOUNCE_THRESHOLD_MS)
+            {
                 return 1;
             }
             LAST_LBUTTON_UP = hookStruct.time;
@@ -29,7 +31,9 @@ static LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lPara
             LAST_RBUTTON_DOWN = hookStruct.time;
             break;
         case WM_RBUTTONUP:
-            if (hookStruct.time < LAST_RBUTTON_UP + DEBOUNCE_THRESHOLD_MS) {
+            if (hookStruct.time < LAST_RBUTTON_UP + DEBOUNCE_THRESHOLD_MS
+             || hookStruct.time < LAST_RBUTTON_DOWN + DEBOUNCE_THRESHOLD_MS)
+            {
                 return 1;
             }
             LAST_RBUTTON_UP = hookStruct.time;
