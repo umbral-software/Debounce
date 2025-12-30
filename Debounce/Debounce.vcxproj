@@ -89,6 +89,7 @@
     <Manifest Include="App.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Debounce.hpp" />
     <ClInclude Include="NotificiationIcon.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

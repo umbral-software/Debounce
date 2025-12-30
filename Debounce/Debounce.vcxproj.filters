@@ -29,5 +29,8 @@
     <ClInclude Include="NotificiationIcon.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Debounce.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

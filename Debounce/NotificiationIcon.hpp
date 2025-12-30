@@ -3,9 +3,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
-static constexpr DWORD DEFAULT_DEBOUNCE_THRESHOLD_MS = 10;
-extern DWORD DEBOUNCE_THRESHOLD_MS;
-
 class NotificationIconClass;
 
 class NotificationIcon {

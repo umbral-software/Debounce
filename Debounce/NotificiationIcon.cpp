@@ -1,5 +1,7 @@
 #include "NotificiationIcon.hpp"
 
+#include "Debounce.hpp"
+
 #include <shellapi.h>
 
 #include <array>
@@ -127,12 +129,13 @@ LRESULT CALLBACK NotificationIconClass::WindowProc(HWND hWnd, UINT Msg, WPARAM w
     case WM_USER:
         switch (LOWORD(lParam)) {
         case WM_CONTEXTMENU:
+            const auto debounceDelayMs = GetDebounceDelay();
             for (const auto delayMs : DELAY_VALUES_MS) {
                 const MENUITEMINFOA mi = {
                     .cbSize = sizeof(MENUITEMINFOA),
                     .fMask = MIIM_STATE,
                     .fState = static_cast<UINT>(
-                        (DEBOUNCE_THRESHOLD_MS == delayMs ? MFS_CHECKED | MFS_DISABLED : 0)
+                        (debounceDelayMs == delayMs ? MFS_CHECKED | MFS_DISABLED : 0)
                         | (DEFAULT_DEBOUNCE_THRESHOLD_MS == delayMs ? MFS_DEFAULT : 0))
                 };
                 SetMenuItemInfoA(self->hSubMenu, delayMs, false, &mi);
@@ -148,7 +151,7 @@ LRESULT CALLBACK NotificationIconClass::WindowProc(HWND hWnd, UINT Msg, WPARAM w
                 PostQuitMessage(0);
             }
             else if (result > 0) {
-                DEBOUNCE_THRESHOLD_MS = result;
+                SetDebounceDelay(result);
             }
             break;
         }

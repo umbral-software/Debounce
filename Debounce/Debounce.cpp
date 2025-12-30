@@ -1,9 +1,16 @@
+#include "Debounce.hpp"
 #include "NotificiationIcon.hpp"
+
+#include <stdexcept>
+
+static constexpr char DELAYMS_KEY_NAME[] = "delayMs";
+static constexpr char SETTINGS_KEY_NAME[] = "Software\\Umbral Software\\Debounce";
 
 // LowLevelMouseProc has no way to stash a user data pointer with it. So these have to be global.
 // MSLLHOOKSTRUCT::dwExtraInfo is for device-specific info, not user data afaict.
-DWORD DEBOUNCE_THRESHOLD_MS = DEFAULT_DEBOUNCE_THRESHOLD_MS;
+static DWORD DEBOUNCE_THRESHOLD_MS;
 static DWORD LAST_LBUTTON_DOWN, LAST_LBUTTON_UP, LAST_RBUTTON_DOWN, LAST_RBUTTON_UP;
+static HKEY H_SETTINGS_KEY;
 
 static LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
@@ -46,6 +53,17 @@ static LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lPara
     return CallNextHookEx(nullptr, nCode, wParam, lParam);
 }
 
+DWORD GetDebounceDelay() noexcept {
+    return DEBOUNCE_THRESHOLD_MS;
+}
+
+void SetDebounceDelay(DWORD delayMs) {
+    DEBOUNCE_THRESHOLD_MS = delayMs;
+    if (RegSetValueExA(H_SETTINGS_KEY, DELAYMS_KEY_NAME, 0, REG_DWORD, reinterpret_cast<LPBYTE>(&delayMs), sizeof(delayMs))) {
+        throw std::runtime_error("Unable to save Delay config");
+    }    
+}
+
 _Use_decl_annotations_
 int wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 {
@@ -67,13 +85,26 @@ int wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
         return -2;
     }
 
+    if (RegCreateKeyExA(HKEY_CURRENT_USER, SETTINGS_KEY_NAME, 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_READ | KEY_WRITE, nullptr, &H_SETTINGS_KEY, nullptr)) {
+        MessageBoxA(nullptr, "Debounce failed to read config.", "Hook failed", MB_ICONERROR);
+        return -3;
+    }
+
+    DWORD delayMs;
+    DWORD delayMsSz = sizeof(delayMs);
+    if (!RegQueryValueExA(H_SETTINGS_KEY, DELAYMS_KEY_NAME, 0, nullptr, reinterpret_cast<LPBYTE>(&delayMs), &delayMsSz)) {
+        DEBOUNCE_THRESHOLD_MS = delayMs;
+    } else {
+        DEBOUNCE_THRESHOLD_MS = DEFAULT_DEBOUNCE_THRESHOLD_MS;
+    }
+
     NotificationIcon ni;
 
     if (!SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS)) MessageBoxA(nullptr, "Debounce failed to set process priority to high. You may experience additional input delay.", "Failed to set Priority", MB_ICONWARNING);
     const auto hHook = SetWindowsHookExA(WH_MOUSE_LL, LowLevelMouseProc, hInstance, 0);
     if (!hHook) {
         MessageBoxA(nullptr, "Debounce failed to register hook.", "Hook failed", MB_ICONERROR);
-        return -3;
+        return -4;
     }
 
     MSG msg;
@@ -88,6 +119,6 @@ int wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
     }
     else
     {
-        return -4;
+        return -5;
     }
 }
