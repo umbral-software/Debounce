@@ -9,7 +9,7 @@ static constexpr char SETTINGS_KEY_NAME[] = "Software\\Umbral Software\\Debounce
 // LowLevelMouseProc has no way to stash a user data pointer with it. So these have to be global.
 // MSLLHOOKSTRUCT::dwExtraInfo is for device-specific info, not user data afaict.
 static DWORD DEBOUNCE_THRESHOLD_MS;
-static DWORD LAST_LBUTTON_DOWN, LAST_LBUTTON_UP, LAST_RBUTTON_DOWN, LAST_RBUTTON_UP;
+static DWORD LAST_LBUTTON_EVENT, LAST_RBUTTON_EVENT;
 
 static LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
@@ -17,32 +17,18 @@ static LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lPara
         const auto& hookStruct = *reinterpret_cast<const MSLLHOOKSTRUCT*>(lParam);
         switch (wParam) {
         case WM_LBUTTONDOWN:
-            if (hookStruct.time < LAST_LBUTTON_DOWN + DEBOUNCE_THRESHOLD_MS) {
-                return 1;
-            }
-            LAST_LBUTTON_DOWN = hookStruct.time;
-            break;
         case WM_LBUTTONUP:
-            if (hookStruct.time < LAST_LBUTTON_UP + DEBOUNCE_THRESHOLD_MS
-             || hookStruct.time < LAST_LBUTTON_DOWN + DEBOUNCE_THRESHOLD_MS)
-            {
+            if (hookStruct.time < LAST_LBUTTON_EVENT + DEBOUNCE_THRESHOLD_MS) {
                 return 1;
             }
-            LAST_LBUTTON_UP = hookStruct.time;
+            LAST_LBUTTON_EVENT = hookStruct.time;
             break;
         case WM_RBUTTONDOWN:
-            if (hookStruct.time < LAST_RBUTTON_DOWN + DEBOUNCE_THRESHOLD_MS) {
-                return 1;
-            }
-            LAST_RBUTTON_DOWN = hookStruct.time;
-            break;
         case WM_RBUTTONUP:
-            if (hookStruct.time < LAST_RBUTTON_UP + DEBOUNCE_THRESHOLD_MS
-             || hookStruct.time < LAST_RBUTTON_DOWN + DEBOUNCE_THRESHOLD_MS)
-            {
+            if (hookStruct.time < LAST_RBUTTON_EVENT + DEBOUNCE_THRESHOLD_MS) {
                 return 1;
             }
-            LAST_RBUTTON_UP = hookStruct.time;
+            LAST_RBUTTON_EVENT = hookStruct.time;
             break;
         default:
             break;
