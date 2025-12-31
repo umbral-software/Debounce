@@ -10,7 +10,6 @@ static constexpr char SETTINGS_KEY_NAME[] = "Software\\Umbral Software\\Debounce
 // MSLLHOOKSTRUCT::dwExtraInfo is for device-specific info, not user data afaict.
 static DWORD DEBOUNCE_THRESHOLD_MS;
 static DWORD LAST_LBUTTON_DOWN, LAST_LBUTTON_UP, LAST_RBUTTON_DOWN, LAST_RBUTTON_UP;
-static HKEY H_SETTINGS_KEY;
 
 static LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
@@ -59,7 +58,7 @@ DWORD GetDebounceDelay() noexcept {
 
 void SetDebounceDelay(DWORD delayMs) {
     DEBOUNCE_THRESHOLD_MS = delayMs;
-    if (RegSetValueExA(H_SETTINGS_KEY, DELAYMS_KEY_NAME, 0, REG_DWORD, reinterpret_cast<LPBYTE>(&delayMs), sizeof(delayMs))) {
+    if (RegSetKeyValueA(HKEY_CURRENT_USER, SETTINGS_KEY_NAME, DELAYMS_KEY_NAME, REG_DWORD, &delayMs, sizeof(delayMs))) {
         throw std::runtime_error("Unable to save Delay config");
     }    
 }
@@ -85,14 +84,9 @@ int wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
         return -2;
     }
 
-    if (RegCreateKeyExA(HKEY_CURRENT_USER, SETTINGS_KEY_NAME, 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_READ | KEY_WRITE, nullptr, &H_SETTINGS_KEY, nullptr)) {
-        MessageBoxA(nullptr, "Debounce failed to read config.", "Hook failed", MB_ICONERROR);
-        return -3;
-    }
-
     DWORD delayMs;
     DWORD delayMsSz = sizeof(delayMs);
-    if (!RegQueryValueExA(H_SETTINGS_KEY, DELAYMS_KEY_NAME, 0, nullptr, reinterpret_cast<LPBYTE>(&delayMs), &delayMsSz)) {
+    if (!RegGetValueA(HKEY_CURRENT_USER, SETTINGS_KEY_NAME, DELAYMS_KEY_NAME, RRF_RT_DWORD, nullptr, &delayMs, &delayMsSz)) {
         DEBOUNCE_THRESHOLD_MS = delayMs;
     } else {
         DEBOUNCE_THRESHOLD_MS = DEFAULT_DEBOUNCE_THRESHOLD_MS;
@@ -104,7 +98,7 @@ int wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
     const auto hHook = SetWindowsHookExA(WH_MOUSE_LL, LowLevelMouseProc, hInstance, 0);
     if (!hHook) {
         MessageBoxA(nullptr, "Debounce failed to register hook.", "Hook failed", MB_ICONERROR);
-        return -4;
+        return -3;
     }
 
     MSG msg;
@@ -119,6 +113,6 @@ int wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
     }
     else
     {
-        return -5;
+        return -4;
     }
 }
