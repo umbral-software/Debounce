@@ -3,7 +3,7 @@
 
 #include <stdexcept>
 
-static constexpr char DELAYMS_KEY_NAME[] = "delayMs";
+static constexpr char SETTINGS_DELAYMS_VALUE_NAME[] = "delayMs";
 static constexpr char SETTINGS_KEY_NAME[] = "Software\\Umbral Software\\Debounce";
 
 // LowLevelMouseProc has no way to stash a user data pointer with it. So these have to be global.
@@ -44,7 +44,7 @@ DWORD GetDebounceDelay() noexcept {
 
 void SetDebounceDelay(DWORD delayMs) {
     DEBOUNCE_THRESHOLD_MS = delayMs;
-    if (RegSetKeyValueA(HKEY_CURRENT_USER, SETTINGS_KEY_NAME, DELAYMS_KEY_NAME, REG_DWORD, &delayMs, sizeof(delayMs))) {
+    if (RegSetKeyValueA(HKEY_CURRENT_USER, SETTINGS_KEY_NAME, SETTINGS_DELAYMS_VALUE_NAME, REG_DWORD, &delayMs, sizeof(delayMs))) {
         throw std::runtime_error("Unable to save Delay config");
     }    
 }
@@ -72,7 +72,7 @@ int wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 
     DWORD delayMs;
     DWORD delayMsSz = sizeof(delayMs);
-    if (!RegGetValueA(HKEY_CURRENT_USER, SETTINGS_KEY_NAME, DELAYMS_KEY_NAME, RRF_RT_DWORD, nullptr, &delayMs, &delayMsSz)) {
+    if (!RegGetValueA(HKEY_CURRENT_USER, SETTINGS_KEY_NAME, SETTINGS_DELAYMS_VALUE_NAME, RRF_RT_DWORD, nullptr, &delayMs, &delayMsSz)) {
         DEBOUNCE_THRESHOLD_MS = delayMs;
     } else {
         DEBOUNCE_THRESHOLD_MS = DEFAULT_DEBOUNCE_THRESHOLD_MS;
